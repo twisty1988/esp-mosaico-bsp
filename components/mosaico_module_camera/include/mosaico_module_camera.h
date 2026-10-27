@@ -114,6 +114,14 @@ esp_err_t mosaico_camera_get_pipeline_stats(
 esp_err_t mosaico_camera_get_frame(mosaico_camera_handle_t camera,
                                    mosaico_camera_frame_t *out_frame);
 
+/** Borrow writable storage of a currently dequeued frame, without allocation.
+ * The frame's single owner may overwrite it after all readers/converters finish.
+ * The buffer remains excluded from capture DMA until return_frame(); no pointer
+ * may be retained or used after that call. Capacity is the full capture buffer. */
+esp_err_t mosaico_camera_get_frame_write_buffer(
+    mosaico_camera_handle_t camera, const mosaico_camera_frame_t *frame,
+    void **data, size_t *capacity);
+
 esp_err_t mosaico_camera_return_frame(mosaico_camera_handle_t camera,
                                       const mosaico_camera_frame_t *frame);
 

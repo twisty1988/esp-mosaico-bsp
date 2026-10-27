@@ -54,3 +54,17 @@ already-applied patch is left unchanged. Git, a writable ESP-IDF checkout, and
 an applicable IDF source revision are required. If the patch cannot be applied,
 CMake reports a warning and continues the build; in that case the SC101IOT
 timing and frame-tail workarounds are not active.
+
+## Reusing a dequeued frame
+
+`mosaico_camera_get_frame_write_buffer()` exposes the writable storage and full
+capacity of a frame already owned by the caller after `get_frame()`. It allocates
+no memory and validates the outstanding index and data pointer under the camera
+lock. Finish all readers and synchronous conversions before overwriting the raw
+image, for example to encode a separately converted RGB preview into this buffer.
+Keep the frame dequeued throughout encoding and file I/O; return it only after all
+users finish. Capture DMA cannot write the dequeued buffer before `return_frame()`.
+The frame has one application owner; the API does not create another borrow or
+extend its lifetime. Calls for returned, foreign or stopped frames fail with
+`ESP_ERR_INVALID_STATE` and empty outputs. Invalid arguments return
+`ESP_ERR_INVALID_ARG`. Stop/close retain their existing outstanding-frame checks.

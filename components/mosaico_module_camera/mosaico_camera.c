@@ -996,6 +996,28 @@ esp_err_t mosaico_camera_get_frame(mosaico_camera_handle_t camera,
     return ESP_OK;
 }
 
+esp_err_t mosaico_camera_get_frame_write_buffer(
+    mosaico_camera_handle_t camera, const mosaico_camera_frame_t *frame,
+    void **data, size_t *capacity)
+{
+    ESP_RETURN_ON_FALSE(camera && frame && data && capacity, ESP_ERR_INVALID_ARG,
+                        TAG, "invalid writable frame request");
+    *data = NULL;
+    *capacity = 0;
+    xSemaphoreTake(camera->lock, portMAX_DELAY);
+    if (!camera->streaming || frame->index >= camera->info.buffer_count ||
+            !camera->outstanding[frame->index] ||
+            frame->data != camera->buffers[frame->index] ||
+            frame->size > camera->buffer_lengths[frame->index]) {
+        xSemaphoreGive(camera->lock);
+        return ESP_ERR_INVALID_STATE;
+    }
+    *data = camera->buffers[frame->index];
+    *capacity = camera->buffer_lengths[frame->index];
+    xSemaphoreGive(camera->lock);
+    return ESP_OK;
+}
+
 esp_err_t mosaico_camera_return_frame(mosaico_camera_handle_t camera,
                                       const mosaico_camera_frame_t *frame)
 {
