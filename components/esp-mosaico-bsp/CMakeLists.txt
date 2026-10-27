@@ -1,11 +1,14 @@
 set(BSP_SRCS
     "onboard/esp_mosaico.c"
     "onboard/subboard.c"
-    "onboard/audio.c"
     "onboard/nand_flash.c"
     "onboard/sensors.c"
     "onboard/battery.c"
 )
+
+if(CONFIG_BSP_AUDIO_ENABLE)
+    list(APPEND BSP_SRCS "onboard/audio.c")
+endif()
 
 if(CONFIG_BSP_DISPLAY_ENABLE)
     list(APPEND BSP_SRCS "onboard/display.c")

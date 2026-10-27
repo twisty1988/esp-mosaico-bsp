@@ -15,11 +15,13 @@ static const char *TAG = "S31-Mosaico-Sensor";
 #define BMM150_DATA_READY_TIMEOUT_MS 200
 #define BMM150_DATA_READY_POLL_MS    5
 
+#if CONFIG_BSP_IMU_ENABLE
 static bmi270_handle_t s_bmi_handle;
 /* Failed creation may retain a handle solely for cleanup. */
 static bool s_bmi_initialized;
 static bsp_imu_config_t s_bmi_config = BSP_IMU_CONFIG_DEFAULT();
 static bool s_bmi_started;
+#endif
 
 typedef struct {
     uint8_t address;
@@ -32,6 +34,7 @@ static bmm150_context_t s_magnetometers[BSP_MAGNETOMETER_NUM] = {
     [BSP_MAGNETOMETER_1].address = BSP_BMM150_ADDR_1,
 };
 
+#if CONFIG_BSP_IMU_ENABLE
 esp_err_t bsp_imu_init(void)
 {
     ESP_RETURN_ON_FALSE(!s_bmi_handle, ESP_ERR_INVALID_STATE, TAG, "BMI270 is already initialized");
@@ -135,6 +138,7 @@ esp_err_t bsp_imu_get_gyro(float *x, float *y, float *z)
 }
 
 struct bmi2_dev *bsp_imu_get_handle(void) { return s_bmi_initialized ? bmi270_get_dev(s_bmi_handle) : NULL; }
+#endif
 
 /* Until the first conversion lands the data registers read back as zero, which
  * compensation turns into an overflow sample. */

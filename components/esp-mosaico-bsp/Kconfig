@@ -1,5 +1,20 @@
 menu "ESP-Mosaico BSP"
 
+    config BSP_AUDIO_ENABLE
+        bool "Enable BSP audio support"
+        default y
+        help
+            Disable when another application-side Board owns the ES8311 codec
+            and I2S. This omits the BSP audio implementation and its dependency.
+
+    config BSP_IMU_ENABLE
+        bool "Enable BSP BMI270 driver"
+        default y
+        help
+            Disable when another Board component owns the BMI270 and supplies
+            its Bosch driver. Mixing both providers can bind incompatible ABIs
+            under the same bmi2/bmi270 symbols.
+
     config BSP_DISPLAY_ENABLE
         bool "Enable BSP display support"
         default y

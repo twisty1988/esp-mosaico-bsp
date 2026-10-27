@@ -14,13 +14,17 @@
 #include "sdkconfig.h"
 #include "driver/gpio.h"
 #include "driver/spi_common.h"
+#if CONFIG_BSP_AUDIO_ENABLE
 #include "bsp/audio.h"
+#endif
 #include "bsp/battery.h"
 #include "bsp/button.h"
 #if CONFIG_BSP_DISPLAY_ENABLE
 #include "bsp/display.h"
 #endif
+#if CONFIG_BSP_IMU_ENABLE
 #include "bsp/imu.h"
+#endif
 #include "bsp/led.h"
 #include "bsp/magnetometer.h"
 #include "bsp/motor.h"
